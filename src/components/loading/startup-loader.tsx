@@ -16,6 +16,17 @@ export function StartupLoader() {
       setVisible(false)
       return
     }
+    // The intro plays once per browser session; later navigations skip it
+    // (a pre-paint inline script also hides the overlay via CSS).
+    if (document.documentElement.hasAttribute('data-skip-loader')) {
+      setVisible(false)
+      return
+    }
+    try {
+      sessionStorage.setItem('papergrid.loader-seen', '1')
+    } catch {
+      /* storage unavailable — the overlay simply shows again next time */
+    }
     const controller = new AbortController()
     const { signal } = controller
     const timers: ReturnType<typeof setTimeout>[] = []

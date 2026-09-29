@@ -18,6 +18,13 @@ export default async function PublicLayout({ children }: { children: React.React
   return (
     <ReadingProvider>
       <div className="pg-public-scope schale-site" data-page-scope="public">
+        {/* Runs before the loader paints: repeat visits in this session skip the intro. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{if(sessionStorage.getItem('papergrid.loader-seen')){document.documentElement.setAttribute('data-skip-loader','1')}}catch(e){}",
+          }}
+        />
         <StartupLoader />
         <CustomHeadScripts raw={customHead || ''} />
         <a className="skip-link" href="#main-content">

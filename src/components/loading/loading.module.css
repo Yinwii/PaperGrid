@@ -38,6 +38,11 @@
   opacity: 0;
   pointer-events: none;
 }
+/* Repeat visits in the same browser session skip the intro overlay entirely;
+   the flag is set by a tiny inline script that runs before first paint. */
+:global(html[data-skip-loader='1']) .startup {
+  display: none !important;
+}
 .avatar {
   width: clamp(140px, 13vw, 210px);
   aspect-ratio: 250 / 334;

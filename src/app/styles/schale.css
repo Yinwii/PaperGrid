@@ -42,7 +42,8 @@
   transform: none;
 }
 .ba-container {
-  width: min(1200px, calc(100% - 80px));
+  /* Wide canvas: leaves comfortable room for a two-column card grid. */
+  width: min(1400px, calc(100% - 64px));
   margin-inline: auto;
 }
 .ba-icon-button {
@@ -489,8 +490,9 @@
 }
 .ba-post-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
+  /* Two cards per row on desktop; the featured card spans the full row. */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 26px;
 }
 .ba-post-card {
   position: relative;

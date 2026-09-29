@@ -52,10 +52,12 @@
 }
 
 :root {
+  /* Normal, highly readable typeface everywhere; the rounded display face is
+     no longer part of body or heading stacks (kept only as an opt-in utility). */
   --font-geist-sans:
-    'PaperGrid Rounded', 'Noto Sans SC Variable', 'PingFang SC', 'Microsoft YaHei', system-ui,
-    sans-serif;
-  --font-display: 'PaperGrid Rounded', 'Noto Sans SC Variable', sans-serif;
+    'Noto Sans SC Variable', 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', system-ui, sans-serif;
+  --font-display:
+    'Noto Sans SC Variable', 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', system-ui, sans-serif;
   --font-reading: 'Noto Sans SC Variable', 'PingFang SC', 'Microsoft YaHei', sans-serif;
   --font-geist-mono: 'SFMono-Regular', Consolas, monospace;
   --font-noto-serif: var(--font-geist-sans);
