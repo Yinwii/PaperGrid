@@ -401,22 +401,23 @@ docker compose pull && docker compose up -d
 用云端的 GitHub Actions 构建镜像，服务器只做拉取，不需要在 VPS 上编译：
 
 ```bash
-# 1) 在你本机：改 package.json 的 version 并与标签一致，然后发布
-#    git tag v1.1.6 && git push origin v1.1.6
-#    （或在 GitHub 网页 Actions 里手动触发「构建并推送 Docker 镜像」）
-#    镜像会推送到 ghcr.io/<你的账号>/papergrid，VPS 无需上游权限
+# 1) 发布新镜像（在你本机）
+#    改 package.json 的 version 与标签一致，然后推标签：
+#      git tag v1.1.7 && git push origin v1.1.7
+#    或在 GitHub 网页 Actions →「构建并推送 Docker 镜像」→ Run workflow 手动触发
+#    镜像会推送到 ghcr.io/<你的账号>/papergrid，无需上游权限
 
-# 2) 在 VPS 的 compose 目录：
+# 2) 在 VPS 的 compose 目录（只需改 yml 里的 image 一行）
 cd /root/papergrid
 docker compose pull && docker compose up -d
 ```
 
-若镜像是私有包，先登录（PAT 需 `read:packages` 权限），或在 GitHub 的
-Packages 设置里把该包改为 public：
-
-```bash
-echo "<你的PAT>" | docker login ghcr.io -u <你的GitHub用户名> --password-stdin
-```
+> **fork 仓库注意**：GitHub 默认不会为 fork 自动运行工作流。首次请打开
+> https://github.com/<你的账号>/PaperGrid/actions ，点击
+> “I understand my workflows, go ahead and enable them”。
+> 未启用时，推标签不会触发构建，需要手动 Run workflow（手动触发始终可用）。
+> 本仓库的镜像默认发布为公开包，VPS 无需 `docker login`；若改为私有，则需
+> 在 VPS 上 `echo "<PAT>" | docker login ghcr.io -u <用户名> --password-stdin`。
 
 **形态 B：服务器上有源码仓库**
 
