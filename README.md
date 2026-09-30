@@ -392,16 +392,47 @@ docker compose pull && docker compose up -d
 
 首次启动自动迁移数据库、生成管理员随机密码并保存在 `/data/initial-admin.txt`。
 
-更新时建议执行：
+### 更新部署（VPS）
+
+**推荐：一条命令完成更新**（自动识别当前部署方式、备份数据库、重建镜像、健康检查）：
 
 ```bash
-docker compose pull && docker compose up -d
+cd ~/papergrid          # 换成你的仓库目录
+./scripts/update-vps.sh
 ```
 
-如果你希望在本地编译镜像：
+可用的开关：
 
 ```bash
-docker compose -f docker-compose.build.yml up -d --build
+MODE=build ./scripts/update-vps.sh      # 强制本地构建镜像（默认，包含本仓库全部改动）
+MODE=pull  ./scripts/update-vps.sh      # 强制从镜像仓库拉取
+ALLOW_STASH=1 ./scripts/update-vps.sh   # 工作区有本地改动时自动 stash 后继续
+```
+
+**手动更新**，按部署方式二选一：
+
+```bash
+# A. 从镜像仓库拉取（仅当镜像由你自己的仓库构建时才包含你的改动）
+git pull && docker compose pull && docker compose up -d
+
+# B. 本地构建镜像（推荐；上游镜像 ghcr.io/xywml/papergrid 不包含本仓库改动）
+git pull && docker compose -f docker-compose.build.yml up -d --build
+```
+
+> 两者的数据卷相同（由仓库目录名决定），切换方式不会丢失数据；但注意
+> `docker-compose.yml` 默认映射 `127.0.0.1:6066`，`docker-compose.build.yml`
+> 默认映射 `127.0.0.1:3000`，切换时请确认与 Nginx 的 `proxy_pass` 一致。
+
+### 个性化配置放在 .env
+
+为避免 `git pull` 与本地修改冲突，请勿直接改 `docker-compose.yml`，把差异写进仓库根目录的
+`.env`（该文件不入库，Compose 会自动读取）：
+
+```bash
+# 参考 docker.env.example
+APP_PORT=6066                              # 宿主机端口，需与 Nginx 一致
+NEXTAUTH_URL=https://your-domain.com       # 反向代理后必须为公网地址，否则登录报 UntrustedHost
+# APP_IMAGE=ghcr.io/your-name/papergrid:latest   # 使用自定义镜像仓库时填写
 ```
 
 > 反向代理部署时必须将 `NEXTAUTH_URL` 改为你的公网 `https://域名`。

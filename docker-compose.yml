@@ -1,10 +1,12 @@
 services:
   app:
 
-    image: ghcr.io/xywml/papergrid:latest
+    # 可在 .env 中用 APP_IMAGE 覆盖（例如你自己的镜像仓库）
+    image: ${APP_IMAGE:-ghcr.io/xywml/papergrid:latest}
     container_name: papergrid
     ports:
-      - "127.0.0.1:6066:3000"
+      # 宿主机端口可用 .env 中的 APP_PORT 覆盖
+      - "127.0.0.1:${APP_PORT:-6066}:3000"
     environment:
       # 建议持久化到数据卷，避免容器重建丢数据
       DATABASE_URL: "file:/data/db.sqlite"
@@ -13,7 +15,8 @@ services:
       # 可选：AI 向量索引使用的 SQLite 日志模式，默认 DELETE（稳定优先）
       # SQLITE_JOURNAL_MODE: "DELETE"
       # 反向代理后必须改成你的公网地址（https://your-domain），否则登录会报 UntrustedHost
-      NEXTAUTH_URL: "https://blog.example.com"
+      # 可在 .env 中用 NEXTAUTH_URL 覆盖，不必改动本文件
+      NEXTAUTH_URL: "${NEXTAUTH_URL:-https://blog.example.com}"
       # 仅信任由 Nginx 覆盖、且源站限制访问的请求头
       TRUSTED_PROXY_HEADER: "x-real-ip"
       # 可选：启用 /api/init（一次性），必须设置且仅通过请求头 x-init-token 传入
