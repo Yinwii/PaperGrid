@@ -84,9 +84,14 @@ c_info "当前容器镜像：${image_ref:-未检测到}  宿主端口：${APP_PO
 
 if [[ "$MODE" == auto ]]; then
   case "$image_ref" in
-    ghcr.io/xywml/* | "")
+    ghcr.io/xywml/*)
       MODE=build
-      c_warn "上游镜像 $image_ref 由原项目构建，不包含本仓库的任何改动 → 自动选择本地构建。"
+      c_warn "上游镜像 $image_ref 由原项目构建，不包含本仓库的改动 → 自动选择本地构建。"
+      c_warn "若你确实使用上游镜像，可加 MODE=pull 强制拉取。"
+      ;;
+    "")
+      MODE=build
+      c_info "未检测到运行中的容器，默认本地构建。"
       ;;
     *)
       MODE=pull
