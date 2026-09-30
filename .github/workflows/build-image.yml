@@ -13,12 +13,21 @@ jobs:
     permissions:
       contents: read
       packages: write
-    env:
-      IMAGE: ghcr.io/xywml/papergrid
 
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
+
+      - name: 解析镜像地址
+        id: image
+        run: |
+          set -euo pipefail
+          # 镜像始终推送到本仓库所属账号的命名空间（GHCR 要求全小写）。
+          # fork 仓库（例如 Yinwii/PaperGrid）因此无需上游权限即可发布自己的镜像。
+          OWNER="${GITHUB_REPOSITORY_OWNER,,}"
+          echo "IMAGE=ghcr.io/${OWNER}/papergrid" >> "$GITHUB_ENV"
+          echo "image=ghcr.io/${OWNER}/papergrid" >> "$GITHUB_OUTPUT"
+          echo "本次镜像地址: ghcr.io/${OWNER}/papergrid"
 
       - name: 配置 Node.js
         uses: actions/setup-node@v4

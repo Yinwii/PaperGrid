@@ -394,34 +394,64 @@ docker compose pull && docker compose up -d
 
 ### 更新部署（VPS）
 
-**推荐：一条命令完成更新**（自动识别当前部署方式、备份数据库、重建镜像、健康检查）：
+先确认服务器上的部署形态，二选一：
+
+**形态 A：只有 compose 文件、没有源码（推荐用于小内存/小磁盘 VPS）**
+
+用云端的 GitHub Actions 构建镜像，服务器只做拉取，不需要在 VPS 上编译：
 
 ```bash
-cd ~/papergrid          # 换成你的仓库目录
-./scripts/update-vps.sh
+# 1) 在你本机：改 package.json 的 version 并与标签一致，然后发布
+#    git tag v1.1.6 && git push origin v1.1.6
+#    （或在 GitHub 网页 Actions 里手动触发「构建并推送 Docker 镜像」）
+#    镜像会推送到 ghcr.io/<你的账号>/papergrid，VPS 无需上游权限
+
+# 2) 在 VPS 的 compose 目录：
+cd /root/papergrid
+docker compose pull && docker compose up -d
 ```
 
-可用的开关：
+若镜像是私有包，先登录（PAT 需 `read:packages` 权限），或在 GitHub 的
+Packages 设置里把该包改为 public：
 
 ```bash
-MODE=build ./scripts/update-vps.sh      # 强制本地构建镜像（默认，包含本仓库全部改动）
-MODE=pull  ./scripts/update-vps.sh      # 强制从镜像仓库拉取
-ALLOW_STASH=1 ./scripts/update-vps.sh   # 工作区有本地改动时自动 stash 后继续
+echo "<你的PAT>" | docker login ghcr.io -u <你的GitHub用户名> --password-stdin
 ```
 
-**手动更新**，按部署方式二选一：
+**形态 B：服务器上有源码仓库**
 
 ```bash
-# A. 从镜像仓库拉取（仅当镜像由你自己的仓库构建时才包含你的改动）
+cd ~/papergrid
+./scripts/update-vps.sh               # 自动备份 + 构建/拉取 + 健康检查
+DRY_RUN=1 ./scripts/update-vps.sh     # 先预览会做什么
+```
+
+手动等价命令：
+
+```bash
+# B1. 从镜像仓库拉取（镜像由你自己的仓库构建时才包含你的改动）
 git pull && docker compose pull && docker compose up -d
 
-# B. 本地构建镜像（推荐；上游镜像 ghcr.io/xywml/papergrid 不包含本仓库改动）
+# B2. 本地构建镜像（上游镜像 ghcr.io/xywml/papergrid 不包含本仓库改动）
 git pull && docker compose -f docker-compose.build.yml up -d --build
 ```
 
-> 两者的数据卷相同（由仓库目录名决定），切换方式不会丢失数据；但注意
+> 两种形态的数据卷相同（由 compose 项目名决定），不会丢数据。但注意
 > `docker-compose.yml` 默认映射 `127.0.0.1:6066`，`docker-compose.build.yml`
-> 默认映射 `127.0.0.1:3000`，切换时请确认与 Nginx 的 `proxy_pass` 一致。
+> 默认映射 `127.0.0.1:3000`，切换时必须与 Nginx 的 `proxy_pass` 一致。
+
+### 磁盘占用
+
+镜像自带 Node 运行时与 Prisma 引擎，通常占用 0.8–1.5G；升级后旧镜像会变成
+悬空镜像，可安全清理（`-a` 会删除所有未被容器使用的镜像，请自行确认）：
+
+```bash
+docker system df          # 先看占用分布
+docker image prune -af    # 清理旧镜像
+docker builder prune -af  # 清理构建缓存（仅本地构建过才有）
+```
+
+> 切勿执行 `docker system prune --volumes`，那会删除 `papergrid_data` 数据卷。
 
 ### 个性化配置放在 .env
 

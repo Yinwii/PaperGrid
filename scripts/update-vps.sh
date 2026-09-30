@@ -89,12 +89,17 @@ if [[ "$MODE" == auto ]]; then
       c_warn "上游镜像 $image_ref 由原项目构建，不包含本仓库的改动 → 自动选择本地构建。"
       c_warn "若你确实使用上游镜像，可加 MODE=pull 强制拉取。"
       ;;
+    ghcr.io/*)
+      MODE=pull
+      c_info "检测到镜像仓库部署（$image_ref）→ 拉取最新镜像。"
+      ;;
     "")
       MODE=build
       c_info "未检测到运行中的容器，默认本地构建。"
       ;;
     *)
-      MODE=pull
+      MODE=build
+      c_info "检测到本地构建镜像（$image_ref）→ 本地重新构建。"
       ;;
   esac
 fi

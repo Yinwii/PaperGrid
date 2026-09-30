@@ -9,7 +9,15 @@ if [[ -z "${VERSION}" ]]; then
   exit 1
 fi
 
-IMAGE="${IMAGE:-ghcr.io/xywml/papergrid}"
+IMAGE="${IMAGE:-}"
+if [[ -z "${IMAGE}" ]]; then
+  # 未显式指定时，按本仓库所属账号推导镜像地址（GHCR 要求小写）。
+  OWNER="$(git -C "${ROOT_DIR}" config --get remote.origin.url 2>/dev/null \
+    | sed -E 's#.*[:/]([^/]+)/[^/]+$#\1#; s#\.git$##' \
+    | tr '[:upper:]' '[:lower:]')"
+  IMAGE="ghcr.io/${OWNER:-xywml}/papergrid"
+  echo "未指定 IMAGE，按远端仓库推导为: ${IMAGE}"
+fi
 TAG_VERSION="${VERSION}"
 if [[ "${TAG_VERSION}" != v* ]]; then
   TAG_VERSION="v${TAG_VERSION}"
