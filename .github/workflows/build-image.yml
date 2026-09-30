@@ -4,6 +4,9 @@ on:
   push:
     tags:
       - "v*"
+    branches:
+      # main 的每次更新都会自动构建并把 latest 指向最新；版本标签只在推 v* 标签时发布
+      - main
   workflow_dispatch:
 
 jobs:
@@ -61,6 +64,11 @@ jobs:
 
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "tag_version=${TAG_VERSION}" >> "$GITHUB_OUTPUT"
+          if [[ "${GITHUB_REF_TYPE:-}" == "tag" ]]; then
+            echo "is_release=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_release=false" >> "$GITHUB_OUTPUT"
+          fi
           echo "使用版本: ${TAG_VERSION}"
 
       - name: 登录 GHCR
@@ -81,12 +89,24 @@ jobs:
         run: node scripts/test-image-startup.mjs
 
       - name: 推送版本标签
+        # 仅在推 v* 标签（正式发布）时发布版本号标签
+        if: steps.meta.outputs.is_release == 'true'
         env:
           IMAGE: ${{ env.IMAGE }}
           TAG_VERSION: ${{ steps.meta.outputs.tag_version }}
         run: docker push "${IMAGE}:${TAG_VERSION}"
 
       - name: 推送 latest 标签
+        # 无论分支还是标签构建，latest 始终指向最新一次成功构建
         env:
           IMAGE: ${{ env.IMAGE }}
         run: docker push "${IMAGE}:latest"
+
+      - name: 推送 edge 标签（分支构建）
+        # 分支构建额外打一个 edge 标签，便于区分“未发布版本”
+        if: steps.meta.outputs.is_release != 'true'
+        env:
+          IMAGE: ${{ env.IMAGE }}
+        run: |
+          docker tag "${IMAGE}:latest" "${IMAGE}:edge"
+          docker push "${IMAGE}:edge"
