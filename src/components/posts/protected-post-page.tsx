@@ -178,7 +178,7 @@ export function ProtectedPostPage({
 
       {/* 文章头部 */}
       <article className="schale-reading-header py-10 sm:py-14">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
           <div className="ba-post-heading">
             {/* 返回按钮 */}
             <Link
@@ -263,7 +263,7 @@ export function ProtectedPostPage({
 
       {/* 文章内容 */}
       <section className="py-12">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
             {/* 主要内容 */}
             <div className="min-w-0 lg:col-span-3">

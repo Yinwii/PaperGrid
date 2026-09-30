@@ -699,7 +699,7 @@
 }
 .schale-reading-header h1 {
   position: relative;
-  max-width: 900px;
+  max-width: 1080px;
   text-wrap: balance;
   line-height: 1.4;
 }
@@ -1645,5 +1645,118 @@
   .ba-search-trigger {
     transition: none;
     transform: none;
+  }
+}
+
+/* ============================================================
+   显示偏好：卡片版式（导航栏切换，localStorage 持久化）
+   html[data-post-layout]：standard 两列(默认) | compact 三列 |
+   dense 四列 | list 列表模式
+   ============================================================ */
+html[data-post-layout='compact'] .ba-post-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+html[data-post-layout='dense'] .ba-post-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+html[data-post-layout='compact'] .ba-post-card[data-featured='true'],
+html[data-post-layout='dense'] .ba-post-card[data-featured='true'] {
+  grid-column: auto;
+}
+html[data-post-layout='compact'] .ba-post-card[data-featured='true'] h3 {
+  font-size: 22px;
+}
+html[data-post-layout='compact'] .ba-post-copy > p,
+html[data-post-layout='dense'] .ba-post-copy > p {
+  -webkit-line-clamp: 2;
+}
+html[data-post-layout='dense'] .ba-post-copy h3 {
+  font-size: 19px;
+}
+html[data-post-layout='dense'] .ba-post-copy {
+  padding: 20px;
+}
+html[data-post-layout='dense'] .ba-post-bottom {
+  margin: 0 20px;
+}
+
+/* 列表模式：横向卡片，封面靠右，正文占满剩余宽度 */
+html[data-post-layout='list'] .ba-post-grid {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
+  max-width: 980px;
+  margin-inline: auto;
+}
+html[data-post-layout='list'] .ba-post-card,
+html[data-post-layout='list'] .ba-post-card[data-featured='true'] {
+  grid-column: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 300px);
+}
+html[data-post-layout='list'] .ba-post-topline {
+  grid-column: 1;
+  grid-row: 1;
+  padding: 18px 24px 0;
+}
+html[data-post-layout='list'] .ba-post-copy {
+  grid-column: 1;
+  grid-row: 2;
+  padding: 14px 24px 0;
+}
+html[data-post-layout='list'] .ba-post-copy h3 {
+  font-size: 21px;
+  margin: 10px 0;
+}
+html[data-post-layout='list'] .ba-post-copy > p {
+  -webkit-line-clamp: 2;
+}
+html[data-post-layout='list'] .ba-post-bottom {
+  grid-column: 1;
+  grid-row: 3;
+  margin: 0 24px;
+}
+html[data-post-layout='list'] .ba-post-image {
+  grid-column: 2;
+  grid-row: 1 / 4;
+  margin: 0;
+  height: 100%;
+  aspect-ratio: auto;
+  border-radius: 0;
+}
+html[data-post-layout='list'] .ba-post-image img {
+  height: 100%;
+  min-height: 160px;
+}
+/* 无封面卡片：右侧留空列自动塌缩，正文占满整行 */
+
+/* 版式变体的响应式回退（置于文件末尾以赢得同优先级级联） */
+@media (max-width: 1199px) {
+  html[data-post-layout='compact'] .ba-post-grid,
+  html[data-post-layout='dense'] .ba-post-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 767px) {
+  html[data-post-layout='compact'] .ba-post-grid,
+  html[data-post-layout='dense'] .ba-post-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+  html[data-post-layout='list'] .ba-post-card,
+  html[data-post-layout='list'] .ba-post-card[data-featured='true'] {
+    display: flex;
+    flex-direction: column;
+  }
+  html[data-post-layout='list'] .ba-post-image {
+    margin: 18px 20px 0;
+    aspect-ratio: 2.6;
+    height: auto;
+    border-radius: 4px;
+  }
+  html[data-post-layout='list'] .ba-post-image img {
+    height: 100%;
+    min-height: 0;
   }
 }

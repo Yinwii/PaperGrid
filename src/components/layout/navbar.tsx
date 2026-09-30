@@ -9,6 +9,7 @@ import { useSession, signOut } from 'next-auth/react'
 import { LogIn, LogOut, Settings, Circle, UserRound } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ThemeToggle } from '@/components/theme/theme-toggle'
+import { DisplayPreferences } from './display-preferences'
 import { SearchTrigger } from '@/components/search/search-trigger'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
@@ -72,6 +73,7 @@ export function Navbar({ settings = {} }: { settings?: Record<string, unknown> }
             <div>
               <SearchTrigger />
             </div>
+            <DisplayPreferences />
             <ThemeToggle />
             {!settings['ui.hideAdminEntry'] && (
               <div className="ba-account-slot">

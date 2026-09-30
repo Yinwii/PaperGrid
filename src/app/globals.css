@@ -58,9 +58,9 @@
     'Noto Sans SC Variable', 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', system-ui, sans-serif;
   --font-display:
     'Noto Sans SC Variable', 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', system-ui, sans-serif;
-  --font-reading: 'Noto Sans SC Variable', 'PingFang SC', 'Microsoft YaHei', sans-serif;
   --font-geist-mono: 'SFMono-Regular', Consolas, monospace;
   --font-noto-serif: var(--font-geist-sans);
+  --font-reading: 'Noto Sans SC Variable', 'PingFang SC', 'Microsoft YaHei', sans-serif;
   --radius: 0.85rem;
   --background: #f2f7fb;
   --foreground: #17324b;
@@ -93,6 +93,19 @@
   --sidebar-accent-foreground: #075985;
   --sidebar-border: #dce8f1;
   --sidebar-ring: #29a9e1;
+}
+/* 用户自选字体方案：由导航栏「显示偏好」切换，pre-paint 脚本写入 html[data-font]。 */
+html[data-font='rounded'] {
+  --font-geist-sans:
+    'PaperGrid Rounded', 'Noto Sans SC Variable', 'PingFang SC', 'Microsoft YaHei', system-ui,
+    sans-serif;
+  --font-display: 'PaperGrid Rounded', 'Noto Sans SC Variable', sans-serif;
+}
+html[data-font='system'] {
+  --font-geist-sans:
+    system-ui, -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-display:
+    system-ui, -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
 }
 .dark {
   --background: #0d1929;

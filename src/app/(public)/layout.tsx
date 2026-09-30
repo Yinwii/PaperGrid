@@ -18,11 +18,12 @@ export default async function PublicLayout({ children }: { children: React.React
   return (
     <ReadingProvider>
       <div className="pg-public-scope schale-site" data-page-scope="public">
-        {/* Runs before the loader paints: repeat visits in this session skip the intro. */}
+        {/* Runs before the loader paints: repeat visits in this session skip the intro,
+            and saved display preferences (font / card layout) apply without a flash. */}
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "try{if(sessionStorage.getItem('papergrid.loader-seen')){document.documentElement.setAttribute('data-skip-loader','1')}}catch(e){}",
+              "try{var d=document.documentElement,f=localStorage.getItem('papergrid.font');if(f)d.setAttribute('data-font',f);var l=localStorage.getItem('papergrid.postLayout');if(l)d.setAttribute('data-post-layout',l);if(sessionStorage.getItem('papergrid.loader-seen'))d.setAttribute('data-skip-loader','1')}catch(e){}",
           }}
         />
         <StartupLoader />

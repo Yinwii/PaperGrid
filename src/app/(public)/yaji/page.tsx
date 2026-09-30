@@ -21,7 +21,7 @@ export default async function YajiPage() {
 
   return (
     <section className="ba-works-page pb-12">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
         <ArchiveHeading title="雅集" />
 
         {projects.length === 0 ? (

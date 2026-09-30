@@ -71,3 +71,6 @@ public/assets/arona-touch-happy.webp
 
 # Local generated artwork and intermediate images.
 /output/imagegen/
+
+# 本地工作记忆（不进入版本库）
+.workbuddy/
